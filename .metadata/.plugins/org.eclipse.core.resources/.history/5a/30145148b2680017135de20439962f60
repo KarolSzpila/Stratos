@@ -1,0 +1,14 @@
+/*
+ * jpegDecoder.h
+ *
+ *  Created on: 14.07.2017
+ *      Author: Karol
+ */
+
+#ifndef JPEGDECODER_JPEGDECODER_H_
+#define JPEGDECODER_JPEGDECODER_H_
+
+uint8_t decodeJPEG(uint8_t img,uint8_t dst
+
+
+#endif /* JPEGDECODER_JPEGDECODER_H_ */

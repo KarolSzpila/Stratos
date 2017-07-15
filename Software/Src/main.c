@@ -42,6 +42,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "stm32f429i_discovery_lcd.h"
+#include "jpegDecoder.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -63,6 +64,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+extern JPEG img;
 
 int main(void)
 {
@@ -93,6 +95,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
   /* USER CODE END WHILE */
