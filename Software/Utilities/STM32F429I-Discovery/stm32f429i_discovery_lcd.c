@@ -191,6 +191,7 @@ uint8_t BSP_LCD_Init(void)
     /* Configure total height */
     LtdcHandler.Init.TotalHeigh = 327;
     
+
     /* Configure R,G,B component values for LCD background color */
     LtdcHandler.Init.Backcolor.Red= 0;
     LtdcHandler.Init.Backcolor.Blue= 0;
@@ -215,6 +216,7 @@ uint8_t BSP_LCD_Init(void)
     
     BSP_LCD_MspInit();
     HAL_LTDC_Init(&LtdcHandler); 
+
     
     /* Select the device */
     LcdDrv = &ili9341_drv;
@@ -263,7 +265,7 @@ void BSP_LCD_LayerDefaultInit(uint16_t LayerIndex, uint32_t FB_Address)
   Layercfg.WindowX1 = BSP_LCD_GetXSize();
   Layercfg.WindowY0 = 0;
   Layercfg.WindowY1 = BSP_LCD_GetYSize(); 
-  Layercfg.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
+  Layercfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB888;
   Layercfg.FBStartAdress = FB_Address;
   Layercfg.Alpha = 255;
   Layercfg.Alpha0 = 0;

@@ -37,8 +37,8 @@ uint8_t decodeJPEG(JPEG img, uint8_t* dst)
 
 	while(!pjpeg_decode_mcu())
 	{
-		uint32_t x_block = mcu_x * image_info.m_MCUWidth * (image_info.m_comps + 1);
-		uint32_t y_block = mcu_y * image_info.m_width * (image_info.m_comps + 1) * image_info.m_MCUHeight;
+		uint32_t x_block = mcu_x * image_info.m_MCUWidth * (image_info.m_comps + 0);
+		uint32_t y_block = mcu_y * image_info.m_width * (image_info.m_comps + 0) * image_info.m_MCUHeight;
 
 		const uint8_t *pSrcR = image_info.m_pMCUBufR;
 		const uint8_t *pSrcG = image_info.m_pMCUBufG;
@@ -48,8 +48,8 @@ uint8_t decodeJPEG(JPEG img, uint8_t* dst)
 		{
 			for(uint32_t j = 0; j < image_info.m_MCUWidth; j++)
 			{
-				uint32_t y = y_block + i*image_info.m_width*(image_info.m_comps + 1);
-				uint32_t x = x_block + j*(image_info.m_comps + 1);
+				uint32_t y = y_block + i*image_info.m_width*(image_info.m_comps + 0);
+				uint32_t x = x_block + j*(image_info.m_comps + 0);
 
 				dst[y + x] = *pSrcB++;
 				dst[y + x + 1] = *pSrcG++;

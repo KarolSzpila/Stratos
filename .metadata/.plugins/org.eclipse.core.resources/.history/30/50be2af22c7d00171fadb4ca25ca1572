@@ -1,0 +1,6 @@
+
+
+
+uint8_t usb_device_ready;
+uint8_t OutPipe, InPipe;
+extern USBH_HandleTypeDef hUsbHostHS;

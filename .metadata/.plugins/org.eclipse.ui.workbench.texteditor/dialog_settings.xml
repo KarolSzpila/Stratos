@@ -2,12 +2,15 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="pCallback_data" key="selection"/>
+		<item value="" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="libusb_bulk_transfer"/>
+			<item value="USBH_NOT_SUPPORTED"/>
+			<item value="Init"/>
 			<item value="pCallback_data"/>
 			<item value="HAL_LTDC_ConfigColorKeying"/>
 			<item value="DisplayOn"/>
