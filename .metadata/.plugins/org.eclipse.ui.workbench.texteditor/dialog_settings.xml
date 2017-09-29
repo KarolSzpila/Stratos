@@ -8,14 +8,20 @@
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="libusb_bulk_transfer"/>
-			<item value="USBH_NOT_SUPPORTED"/>
-			<item value="Init"/>
-			<item value="pCallback_data"/>
-			<item value="HAL_LTDC_ConfigColorKeying"/>
-			<item value="DisplayOn"/>
+			<item value="DF11"/>
+			<item value="msg"/>
+			<item value="decodeAC12Field"/>
+			<item value="MODES_UNIT_FEET"/>
+			<item value="addRecentlySeenICAOAddr"/>
+			<item value="computeMagnitudeVector"/>
+			<item value="HAL_GPIO_Too "/>
+			<item value="HAL_GPIO_WritePin"/>
 		</list>
 		<list key="replacehistory">
+			<item value="magnitude"/>
+			<item value="found = 1;"/>
+			<item value="hUsbHostHS"/>
+			<item value=""/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "stm32f4xx_hal.h"
 #ifndef _WIN32
 #include <unistd.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -421,12 +422,7 @@ int rtlsdr_read_array(rtlsdr_dev_t* dev, uint8_t block, uint16_t addr, uint8_t* 
     uint16_t index = (block << 8);
 
     r = libusb_control_transfer(dev->devh, CTRL_IN, 0, addr, index, array, len, CTRL_TIMEOUT);
-    #if 0
 
-    if (r < 0)
-    { DEBUG_PRINT("%s failed with %d\n", __FUNCTION__, r); }
-
-    #endif
     return r;
 }
 
@@ -435,12 +431,7 @@ int rtlsdr_write_array(rtlsdr_dev_t* dev, uint8_t block, uint16_t addr, uint8_t*
     uint16_t index = (block << 8) | 0x10;
 
     r = libusb_control_transfer(dev->devh, CTRL_OUT, 0, addr, index, array, len, CTRL_TIMEOUT);
-    #if 0
 
-    if (r < 0)
-    { DEBUG_PRINT("%s failed with %d\n", __FUNCTION__, r); }
-
-    #endif
     return r;
 }
 
@@ -516,7 +507,8 @@ int rtlsdr_write_reg(rtlsdr_dev_t* dev, uint8_t block, uint16_t addr, uint16_t v
     r = libusb_control_transfer(dev->devh, CTRL_OUT, 0, addr, index, data, len, CTRL_TIMEOUT);
 
     if (r < 0)
-    { //DEBUG_PRINT("%s failed with %d\n", __FUNCTION__, r);
+    {
+    	//DEBUG_PRINT("%s failed with %d\n", __FUNCTION__, r);
     }
 
     return r;
@@ -1387,7 +1379,7 @@ const char* rtlsdr_get_device_name(uint32_t index) {
 
 
 int rtlsdr_open(rtlsdr_dev_t** out_dev, uint32_t index) {
-    int r;
+    int r = 0;
     int i;
     libusb_device** list;
     rtlsdr_dev_t* dev = out_dev[0];
@@ -1415,64 +1407,15 @@ int rtlsdr_open(rtlsdr_dev_t** out_dev, uint32_t index) {
 
     /* Probe tuners */
     rtlsdr_set_i2c_repeater(dev, 1);
-
-    reg = rtlsdr_i2c_read_reg(dev, E4K_I2C_ADDR, E4K_CHECK_ADDR);
-
-    if (reg == E4K_CHECK_VAL) {
-        //DEBUG_PRINT("Found Elonics E4000 tuner\n");
-        dev->tuner_type = RTLSDR_TUNER_E4000;
-        goto found;
-    }
-
-    reg = rtlsdr_i2c_read_reg(dev, FC0013_I2C_ADDR, FC0013_CHECK_ADDR);
-
-    if (reg == FC0013_CHECK_VAL) {
-       // DEBUG_PRINT("Found Fitipower FC0013 tuner\n");
-        dev->tuner_type = RTLSDR_TUNER_FC0013;
-        goto found;
-    }
+    uint8_t found = 0;
 
     reg = rtlsdr_i2c_read_reg(dev, R820T_I2C_ADDR, R82XX_CHECK_ADDR);
 
     if (reg == R82XX_CHECK_VAL) {
        // DEBUG_PRINT("Found Rafael Micro R820T tuner\n");
         dev->tuner_type = RTLSDR_TUNER_R820T;
-        goto found;
     }
 
-    reg = rtlsdr_i2c_read_reg(dev, R828D_I2C_ADDR, R82XX_CHECK_ADDR);
-
-    if (reg == R82XX_CHECK_VAL) {
-       // DEBUG_PRINT("Found Rafael Micro R828D tuner\n");
-        dev->tuner_type = RTLSDR_TUNER_R828D;
-        goto found;
-    }
-
-    /* initialise GPIOs */
-    rtlsdr_set_gpio_output(dev, 5);
-
-    /* reset tuner before probing */
-    rtlsdr_set_gpio_bit(dev, 5, 1);
-    rtlsdr_set_gpio_bit(dev, 5, 0);
-
-    reg = rtlsdr_i2c_read_reg(dev, FC2580_I2C_ADDR, FC2580_CHECK_ADDR);
-
-    if ((reg & 0x7f) == FC2580_CHECK_VAL) {
-        //DEBUG_PRINT("Found FCI 2580 tuner\n");
-        dev->tuner_type = RTLSDR_TUNER_FC2580;
-        goto found;
-    }
-
-    reg = rtlsdr_i2c_read_reg(dev, FC0012_I2C_ADDR, FC0012_CHECK_ADDR);
-
-    if (reg == FC0012_CHECK_VAL) {
-        //DEBUG_PRINT("Found Fitipower FC0012 tuner\n");
-        rtlsdr_set_gpio_output(dev, 6);
-        dev->tuner_type = RTLSDR_TUNER_FC0012;
-        goto found;
-    }
-
-found:
     /* use the rtl clock value by default */
     dev->tun_xtal = dev->rtl_xtal;
     dev->tuner = &tuners[dev->tuner_type];
@@ -1497,8 +1440,7 @@ found:
             break;
 
         case RTLSDR_TUNER_UNKNOWN:
-           // DEBUG_PRINT("No supported tuner found\n");
-            rtlsdr_set_direct_sampling(dev, 1);
+        	return -1;
             break;
 
         default:
@@ -1666,7 +1608,6 @@ int rtlsdr_read_async(rtlsdr_dev_t* dev, rtlsdr_read_async_cb_t cb, void* ctx,
         r = libusb_submit_transfer(dev->xfer[i]);
 
         if (r < 0) {
-            DEBUG_PRINT("Failed to submit transfer %i!\n", i);
             dev->async_status = RTLSDR_CANCELING;
             break;
         }

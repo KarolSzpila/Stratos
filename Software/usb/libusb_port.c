@@ -61,6 +61,11 @@ int libusb_control_transfer(libusb_device_handle* dev_handle,
         status = USBH_CtlReq(&hUsbHostHS, data, wLength);
     } while (status == 1);
 
+    if (status == USBH_NOT_SUPPORTED)
+    {
+    	 hUsbHostHS.RequestState = CMD_SEND;
+    	return -1;
+    }
     if (status != USBH_OK)  {
         hUsbHostHS.RequestState = CMD_SEND;
         return 0;

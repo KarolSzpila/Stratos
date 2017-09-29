@@ -4,6 +4,11 @@
   * @version         : v1.0_Cube
   * @brief           :  This file implements the USB Host 
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -46,11 +51,7 @@
 
 #include "usb_host.h"
 #include "usbh_core.h"
-#include "usbh_audio.h"
 #include "usbh_cdc.h"
-#include "usbh_msc.h"
-#include "usbh_hid.h"
-#include "usbh_mtp.h"
 
 /* USB Host Core handle declaration */
 USBH_HandleTypeDef hUsbHostHS;
@@ -81,15 +82,7 @@ void MX_USB_HOST_Init(void)
   /* Init Host Library,Add Supported Class and Start the library*/
   USBH_Init(&hUsbHostHS, USBH_UserProcess, HOST_HS);
 
-  USBH_RegisterClass(&hUsbHostHS, USBH_AUDIO_CLASS);
-
   USBH_RegisterClass(&hUsbHostHS, USBH_CDC_CLASS);
-
-  USBH_RegisterClass(&hUsbHostHS, USBH_MSC_CLASS);
-
-  USBH_RegisterClass(&hUsbHostHS, USBH_HID_CLASS);
-
-  USBH_RegisterClass(&hUsbHostHS, USBH_MTP_CLASS);
 
   USBH_Start(&hUsbHostHS);
 }

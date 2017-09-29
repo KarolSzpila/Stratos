@@ -4,6 +4,11 @@
   * @version        : v1.0_Cube
   * @brief          : Header for usbh_conf file.
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -61,10 +66,10 @@
 	MiddleWare version : 
 */
 /*----------   -----------*/
-#define USBH_MAX_NUM_ENDPOINTS      5 
+#define USBH_MAX_NUM_ENDPOINTS      2 
  
 /*----------   -----------*/
-#define USBH_MAX_NUM_INTERFACES      10 
+#define USBH_MAX_NUM_INTERFACES      2 
  
 /*----------   -----------*/
 #define USBH_MAX_NUM_CONFIGURATION      1 
@@ -73,7 +78,7 @@
 #define USBH_KEEP_CFG_DESCRIPTOR      1 
  
 /*----------   -----------*/
-#define USBH_MAX_NUM_SUPPORTED_CLASS      5 
+#define USBH_MAX_NUM_SUPPORTED_CLASS      1 
  
 /*----------   -----------*/
 #define USBH_MAX_SIZE_CONFIGURATION      256 

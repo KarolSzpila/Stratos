@@ -23,14 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <windows.h>
-#include <fcntl.h>
-#include <io.h>
-#define _USE_MATH_DEFINES
-#endif
 
 #include <math.h>
 
@@ -196,11 +188,6 @@ int verbose_auto_gain(rtlsdr_dev_t *dev)
 {
 	int r;
 	r = rtlsdr_set_tuner_gain_mode(dev, 0);
-	if (r != 0) {
-		//DEBUG_PRINT("WARNING: Failed to set tuner gain.\n");
-	} else {
-		//DEBUG_PRINT("Tuner gain set to automatic.\n");
-	}
 	return r;
 }
 
@@ -245,62 +232,3 @@ int verbose_reset_buffer(rtlsdr_dev_t *dev)
 	return r;
 }
 
-int verbose_device_search(char *s)
-{
-	int i, device_count, device, offset;
-	char *s2;
-	char vendor[256], product[256], serial[256];
-	device_count = rtlsdr_get_device_count();
-	if (!device_count) {
-		//DEBUG_PRINT("No supported devices found.\n");
-		return -1;
-	}
-	//DEBUG_PRINT("Found %d device(s):\n", device_count);
-	for (i = 0; i < device_count; i++) {
-		rtlsdr_get_device_usb_strings(i, vendor, product, serial);
-		//DEBUG_PRINT("  %d:  %s, %s, SN: %s\n", i, vendor, product, serial);
-	}
-	//DEBUG_PRINT("\n");
-	/* does string look like raw id number */
-	device = (int)strtol(s, &s2, 0);
-	if (s2[0] == '\0' && device >= 0 && device < device_count) {
-		//DEBUG_PRINT("Using device %d: %s\n",
-			//device, rtlsdr_get_device_name((uint32_t)device));
-		return device;
-	}
-	/* does string exact match a serial */
-	for (i = 0; i < device_count; i++) {
-		rtlsdr_get_device_usb_strings(i, vendor, product, serial);
-		if (strcmp(s, serial) != 0) {
-			continue;}
-		device = i;
-		//DEBUG_PRINT("Using device %d: %s\n",
-			//device, rtlsdr_get_device_name((uint32_t)device));
-		return device;
-	}
-	/* does string prefix match a serial */
-	for (i = 0; i < device_count; i++) {
-		rtlsdr_get_device_usb_strings(i, vendor, product, serial);
-		if (strncmp(s, serial, strlen(s)) != 0) {
-			continue;}
-		device = i;
-		//DEBUG_PRINT("Using device %d: %s\n",
-			//device, rtlsdr_get_device_name((uint32_t)device));
-		return device;
-	}
-	/* does string suffix match a serial */
-	for (i = 0; i < device_count; i++) {
-		rtlsdr_get_device_usb_strings(i, vendor, product, serial);
-		offset = strlen(serial) - strlen(s);
-		if (offset < 0) {
-			continue;}
-		if (strncmp(s, serial+offset, strlen(s)) != 0) {
-			continue;}
-		device = i;
-		//DEBUG_PRINT("Using device %d: %s\n",
-			//device, rtlsdr_get_device_name((uint32_t)device));
-		return device;
-	}
-	//DEBUG_PRINT("No matching devices found.\n");
-	return -1;
-}

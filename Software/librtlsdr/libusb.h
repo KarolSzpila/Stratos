@@ -1317,7 +1317,7 @@ int LIBUSB_CALL libusb_control_transfer(libusb_device_handle *dev_handle,
     unsigned char *data, uint16_t wLength, unsigned int timeout);
 
 int LIBUSB_CALL libusb_bulk_transfer(libusb_device_handle *dev_handle,
-    unsigned char endpoint, unsigned char *data, int length,
+    unsigned char endpoint, unsigned char* data, int length,
     int *actual_length, unsigned int timeout);
 
 int LIBUSB_CALL libusb_interrupt_transfer(libusb_device_handle *dev_handle,
