@@ -1,7 +1,9 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.launchbar.core.descriptorType.default\:Software.elf
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:Software.elf,org.eclipse.launchbar.core.descriptorType.default\:Stratos cpp.elf,org.eclipse.launchbar.core.descriptorType.default\:Project.elf,org.eclipse.launchbar.core.descriptorType.default\:Stratos F4.elf,org.eclipse.launchbar.core.descriptorType.default\:Software F4.elf,org.eclipse.launchbar.core.descriptorType.default\:Stratos.elf
 eclipse.preferences.version=1
+org.eclipse.launchbar.core.descriptorType.default\:Project.elf/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:Project.elf/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
 org.eclipse.launchbar.core.descriptorType.default\:Software.elf/activeLaunchMode=debug
 org.eclipse.launchbar.core.descriptorType.default\:Software.elf/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
 org.eclipse.launchbar.core.descriptorType.default\:Stratus.elf/activeLaunchMode=debug

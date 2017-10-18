@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Stratos/Utilities/jpegDecoder/jpegDecoder.c&apos; to &apos;jpegDecoder.cpp&apos;" description="Rename resource &apos;jpegDecoder.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Utilities/jpegDecoder/jpegDecoder.c" name="jpegDecoder.cpp" stamp="1507838288161" updateReferences="true"/>
+</session>

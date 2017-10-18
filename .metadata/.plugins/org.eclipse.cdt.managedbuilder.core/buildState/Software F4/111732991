@@ -1,0 +1,8 @@
+#
+#Wed Oct 18 17:03:14 CEST 2017
+Middlewares/ST/STM32_USB_Host_Library/Class/SDR/Inc/tuner_r82xx.h=1
+Debug/Software\ F4=1
+Middlewares/ST/STM32_USB_Host_Library/Class/SDR/Src/tuner_r82xx.c=1
+Debug/Middlewares/ST/STM32_USB_Host_Library/Class/SDR/Src/tuner_r82xx.o=1
+Debug/Middlewares/ST/STM32_USB_Host_Library/Class/SDR/Src/usbh_rtlsdr.o=1
+Debug/Software\ F4.elf=1

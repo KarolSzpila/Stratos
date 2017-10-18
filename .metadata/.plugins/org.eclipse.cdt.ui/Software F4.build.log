@@ -1,0 +1,84 @@
+17:03:13 **** Incremental Build of configuration Debug for project Software F4 ****
+Info: Internal Builder is used for build
+arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=gnu11 -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F429xx -I../Inc -IG:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc -IG:\Stratos\Software F4\librtlsdr -IG:\Stratos\Software F4\usb -IG:\Stratos\Software F4\librtlsdr -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -IG:\Stratos\Software F4\Utilities\Components\ili9341 -IG:\Stratos\Software F4\Utilities\Fonts -IG:\Stratos\Software F4\Utilities\Log -IG:\Stratos\Software F4\Utilities\STM32F429I-Discovery -IG:\Stratos\Software F4\Utilities\jpegDecoder -IG:\Stratos\Software F4\Utilities\images -IG:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc -O3 -ffunction-sections -fdata-sections -g -fstack-usage -Wall -specs=nano.specs -o Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.o ..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c 
+arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=gnu11 -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F429xx -I../Inc -IG:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc -IG:\Stratos\Software F4\librtlsdr -IG:\Stratos\Software F4\usb -IG:\Stratos\Software F4\librtlsdr -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -IG:\Stratos\Software F4\Utilities\Components\ili9341 -IG:\Stratos\Software F4\Utilities\Fonts -IG:\Stratos\Software F4\Utilities\Log -IG:\Stratos\Software F4\Utilities\STM32F429I-Discovery -IG:\Stratos\Software F4\Utilities\jpegDecoder -IG:\Stratos\Software F4\Utilities\images -IG:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc -O3 -ffunction-sections -fdata-sections -g -fstack-usage -Wall -specs=nano.specs -o Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\usbh_rtlsdr.o ..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\usbh_rtlsdr.c 
+In file included from ..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:30:0:
+In file included from ..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:30:0:
+In file included from ..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\usbh_rtlsdr.c:63:0:
+G:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc/tuner_r82xx.h:175:45: error: unknown type name 'ui'
+G:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc/tuner_r82xx.h:175:45: error: unknown type name 'ui'
+ void StoreShadow(R82XX_HandleTypeDef* priv, ui;nt8_t reg, const uint8_t *val,int len);
+ void StoreShadow(R82XX_HandleTypeDef* priv, ui;nt8_t reg, const uint8_t *val,int len);
+                                             ^~
+                                             ^~
+G:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc/tuner_r82xx.h:175:48: error: unknown type name 'nt8_t'
+G:\Stratos\Software F4\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Inc/tuner_r82xx.h:175:48: error: unknown type name 'nt8_t'
+ void StoreShadow(R82XX_HandleTypeDef* priv, ui;nt8_t reg, const uint8_t *val,int len);
+ void StoreShadow(R82XX_HandleTypeDef* priv, ui;nt8_t reg, const uint8_t *val,int len);
+                                                ^~~~~
+                                                ^~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c: In function 'r82xx_set_pll':
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:430:11: warning: unused variable 'sleep_time' [-Wunused-variable]
+  unsigned sleep_time = 10000;
+           ^~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:429:10: warning: unused variable 'i' [-Wunused-variable]
+  int rc, i;
+          ^
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c: In function 'R82XX_InitProcess':
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1421:6: warning: implicit declaration of function 'StoreShadow' [-Wimplicit-function-declaration]
+      StoreShadow(R82XX_Handle,0x05,r82xx_init_array, sizeof(r82xx_init_array));
+      ^~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1423:19: error: 'priv' undeclared (first use in this function)
+      shadow_store(priv, reg, val, len);
+                   ^~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1423:19: note: each undeclared identifier is reported only once for each function it appears in
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1423:25: error: 'reg' undeclared (first use in this function)
+      shadow_store(priv, reg, val, len);
+                         ^~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1423:30: error: 'val' undeclared (first use in this function)
+      shadow_store(priv, reg, val, len);
+                              ^~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1423:35: error: 'len' undeclared (first use in this function)
+      shadow_store(priv, reg, val, len);
+                                   ^~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1427:8: error: 'buf' undeclared (first use in this function)
+        buf[0] = reg;
+        ^~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1433:9: warning: 'return' with no value, in function returning non-void
+         return;
+         ^~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1375:20: note: declared here
+ USBH_StatusTypeDef R82XX_InitProcess(USBH_HandleTypeDef *phost)
+                    ^~~~~~~~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1426:16: warning: unused variable 'buff' [-Wunused-variable]
+        uint8_t buff[2];
+                ^~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1422:10: warning: unused variable 'rc' [-Wunused-variable]
+      int rc, size, pos = 0;
+          ^~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1393:4: warning: enumeration value 'R82XX_REQ_COMPLETE' not handled in switch [-Wswitch]
+    switch (R82XX_Handle->initState) {
+    ^~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1378:23: warning: variable 'retStatus' set but not used [-Wunused-but-set-variable]
+    USBH_StatusTypeDef retStatus = USBH_BUSY;
+                       ^~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c: At top level:
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1481:6: warning: conflicting types for 'StoreShadow'
+ void StoreShadow(R82XX_HandleTypeDef* priv, uint8_t reg, const uint8_t *val,int len)
+      ^~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1421:6: note: previous implicit declaration of 'StoreShadow' was here
+      StoreShadow(R82XX_Handle,0x05,r82xx_init_array, sizeof(r82xx_init_array));
+      ^~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1254:12: warning: 'r82xx_xtal_check' defined but not used [-Wunused-function]
+ static int r82xx_xtal_check(struct r82xx_priv *priv)
+            ^~~~~~~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:1008:18: warning: 'r82xx_vga_gain_steps' defined but not used [-Wunused-const-variable=]
+ static const int r82xx_vga_gain_steps[]  = {
+                  ^~~~~~~~~~~~~~~~~~~~
+..\Middlewares\ST\STM32_USB_Host_Library\Class\SDR\Src\tuner_r82xx.c:990:12: warning: 'r82xx_read_gain' defined but not used [-Wunused-function]
+ static int r82xx_read_gain(struct r82xx_priv *priv)
+            ^~~~~~~~~~~~~~~
+Info: Parallel threads used: 2
+
+17:03:14 Build Finished (took 557ms)
+
