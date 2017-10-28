@@ -3,4 +3,7 @@
 <project name="Software">
 <provider id="org.eclipse.cdt.ui.provider1"/>
 </project>
+<project name="Stratos">
+<provider id="org.eclipse.cdt.ui.provider1"/>
+</project>
 </cHelpSettings>

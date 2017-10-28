@@ -51,7 +51,9 @@
   /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+#ifdef __cplusplus
+ extern "C" {
+#endif
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
@@ -73,6 +75,8 @@
 
 /* USER CODE END Private defines */
 
+extern void _Error_Handler(char *, int);
+
 #define Error_Handler() _Error_Handler(__FILE__, __LINE__)
 
 /**
@@ -82,6 +86,8 @@
 /**
   * @}
 */ 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

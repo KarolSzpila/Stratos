@@ -1,0 +1,3 @@
+ltdc.c:62:6:MX_LTDC_Init	144	static
+ltdc.c:130:6:HAL_LTDC_MspInit	48	static
+ltdc.c:261:6:HAL_LTDC_MspDeInit	8	static

@@ -1,0 +1,9 @@
+usbh_ioreq.c:98:20:USBH_CtlSendSetup	32	static
+usbh_ioreq.c:124:20:USBH_CtlSendData	40	static
+usbh_ioreq.c:157:20:USBH_CtlReceiveData	32	static
+usbh_ioreq.c:184:20:USBH_BulkSendData	40	static
+usbh_ioreq.c:216:20:USBH_BulkReceiveData	32	static
+usbh_ioreq.c:242:20:USBH_InterruptReceiveData	32	static
+usbh_ioreq.c:268:20:USBH_InterruptSendData	32	static
+usbh_ioreq.c:294:20:USBH_IsocReceiveData	32	static
+usbh_ioreq.c:321:20:USBH_IsocSendData	32	static
