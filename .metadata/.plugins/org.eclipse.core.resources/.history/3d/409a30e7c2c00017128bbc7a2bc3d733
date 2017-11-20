@@ -1,0 +1,33 @@
+/*
+ * FlightControlModel.h
+ *
+ *  Created on: 28.10.2017
+ *      Author: Karol
+ */
+
+#ifndef FLIGHTCONTROL_FLIGHTCONTROL_H_
+#define FLIGHTCONTROL_FLIGHTCONTROL_H_
+
+#include <string>
+
+#include "fixed_size_unordered_map.h"
+#include "ADSBMessage.h"
+#include "Aircraft.h"
+
+class FlightControl
+{
+public:
+	FlightControl();
+
+	Aircraft* FindAircraftByICAO_Address(const std::string& ICAO_Address);
+	void AddAircraft(const std::string& ICAO, const Aircraft& aircraft);
+	void TickAircrafts();
+private:
+
+	fixed_size_unordered_map<std::string,Aircraft> aircrafts;
+
+
+
+};
+
+#endif /* FLIGHTCONTROL_FLIGHTCONTROL_H_ */

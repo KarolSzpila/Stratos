@@ -1,0 +1,30 @@
+/*
+ * FlightControlModel.h
+ *
+ *  Created on: 28.10.2017
+ *      Author: Karol
+ */
+
+#ifndef FLIGHTCONTROL_FLIGHTCONTROL_H_
+#define FLIGHTCONTROL_FLIGHTCONTROL_H_
+
+#include <AircraftRecord.h>
+#include <string>
+#include <list>
+
+#include "ADSBMessage.h"
+
+class FlightControl
+{
+public:
+	FlightControl();
+
+private:
+
+	std::list<AircraftRecord> aircrafts;
+
+
+
+};
+
+#endif /* FLIGHTCONTROL_FLIGHTCONTROL_H_ */

@@ -10,7 +10,7 @@
 
 #include "RTLSDR.h"
 #include "ADSBMessage.h"
-
+#include "cmsis_os.h"
 #include <array>
 
 #define magnitudeLUTSize 129*129*2
@@ -25,7 +25,7 @@ typedef std::array<uint16_t,USB_IN_STREAM_SIZE/2> MagnitudeVectorType;
 class ADS_BDecoder
 {
 public:
-	ADS_BDecoder();
+	ADS_BDecoder(QueueHandle_t messageQueue);
 
 	void ProcessRawSamples(uint8_t* rawSamples);
 
@@ -48,6 +48,8 @@ private:
 	int FixSingleBitErrors(unsigned char *msg, int bits);
 	std::array<uint16_t, magnitudeLUTSize >magnitudeLUT;
 	uint16_t maglut[129*129*2];
+
+	QueueHandle_t messageQueue;
 };
 
 #endif /* ADS_BDECODER_ADSBDECODER_H_ */

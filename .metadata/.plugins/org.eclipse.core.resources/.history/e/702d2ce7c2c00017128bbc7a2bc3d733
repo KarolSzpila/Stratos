@@ -1,0 +1,26 @@
+/*
+ * Airplaine.cpp
+ *
+ *  Created on: 29.10.2017
+ *      Author: Karol
+ */
+
+#include <AircraftRecord.h>
+
+Aircraft::Aircraft(const std::string& ICAO_Address) : ICAO_Address(ICAO_Address)
+{
+	leftLiveSpan = DEFAULT_LIVE_SAPAN;
+	aircraftExpiered = false;
+}
+
+void Aircraft::UpdateStatus(const ADS_BMessage& msg)
+{
+	if(leftLiveSpan > 0)
+	{
+		--leftLiveSpan;
+		if(leftLiveSpan == 0)
+		{
+			aircraftExpiered = true;
+		}
+	}
+}

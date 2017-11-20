@@ -2,27 +2,30 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="USBH_LL_SetTimer" key="selection"/>
+		<item value="msg." key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="USBH_LL_SetTimer"/>
-			<item value="phost-&gt;Timer"/>
-			<item value="URB_Status"/>
-			<item value="1, 0x15, 0x01, 1)"/>
-			<item value="tuner_type"/>
-			<item value="dev-&gt;tun_xtal"/>
-			<item value="ev-&gt;rtl_xtal"/>
-			<item value="rtlsdr_set_if_freq"/>
+			<item value="mm-&gt;"/>
+			<item value="style"/>
+			<item value="uxPriority"/>
+			<item value="BULK_TIMEOUT"/>
+			<item value="FRAME_BUFFER_ADDRESS"/>
+			<item value="VRAM_ADDR"/>
+			<item value="BUTTON_Callback"/>
+			<item value="_CreateIndirect"/>
 		</list>
 		<list key="replacehistory">
+			<item value="msg."/>
+			<item value="VRAM_ADDR"/>
+			<item value=""/>
+			<item value="template&lt;class Key,class T&gt;"/>
+			<item value="fixed_size_unordered_map"/>
 			<item value="RT82XX_Handle"/>
 			<item value="magnitude"/>
 			<item value="found = 1;"/>
-			<item value="hUsbHostHS"/>
-			<item value=""/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

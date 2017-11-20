@@ -58,12 +58,33 @@
 #include "usart.h"
 
 #include "BoardMenager.h"
+#include "InterruptMenager.h"
+#include "ADSBDecoder.h"
+#include "GUI.h"
+#include "FlightCotrolView.h"
+#include "FlightControl.h"
+#include "FlightControlControler.h"
+#include "timers.h"
 
 BoardMenager boardMenager;
+
+
+SemaphoreHandle_t xSemaphore = NULL;
+QueueHandle_t messageQueue = NULL;
+TimerHandle_t modelTimer = NULL;
+
+
+FlightCotrolView view;
+FlightControl model;
+FlightControlControler controler(model,view);
+
+static uint32_t ticks = 0;
 
 void USBMonitorTask(void*)
 {
 	USBDriver& usbDriverHandle = boardMenager.GetUSB();
+	RTLSDR& rtlSdrHandle =  boardMenager.GetRTLSDR();
+
 	while(1)
 	{
 		usbDriverHandle.USBHostProcess();
@@ -71,13 +92,67 @@ void USBMonitorTask(void*)
 		{
 			vTaskSuspendAll();
 			usbDriverHandle.InitHost();
-			boardMenager.GetRTLSDR().OpenDevice(0U,1090000000U,2000000U);
+			rtlSdrHandle.OpenDevice(0,1090000000,2000000);
 			xTaskResumeAll();
 		}
+		vTaskDelay(100);
+	}
+}
+void RTLSDRDataAquisitionTask(void*)
+{
+	RTLSDR& rtlsdrHandle = boardMenager.GetRTLSDR();
+	ADS_BDecoder decoder(messageQueue);
+
+	while(1)
+	{
+		if( xSemaphoreTake( xSemaphore, 100) == pdTRUE )
+		{
+			decoder.ProcessRawSamples(rtlsdrHandle.GetRawSamplesFromBuffer());
+			rtlsdrHandle.GetNewRawSamples();
+		}
+	}
+}
+
+void FlightControlerTask(void *)
+{
+	ADS_BMessage msg;
+	while(1)
+	{
+		if(ticks > 0)
+		{
+			controler.UpdateTicksCount(1);
+			ticks--;
+		}
+		if(xQueueReceive(messageQueue,&msg,10) == pdTRUE)
+		{
+			controler.PassNewMessage(msg);
+		}
+		controler.UpdateView();
 
 	}
 }
 
+
+
+void GUITask(void*)
+{
+
+	while(1)
+	{
+		GUI_Exec();
+
+		vTaskDelay(10);
+
+	}
+}
+
+
+void vTimerCallback(TimerHandle_t xTimer)
+{
+	//controler.NotifyTimerTickOccured();
+	HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_15);
+	ticks++;
+}
 
 int main(void)
 {
@@ -90,30 +165,33 @@ int main(void)
   MX_DMA2D_Init();
   MX_CRC_Init();
 
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  HAL_Delay(200);
+  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
 
-  xTaskCreate(USBMonitorTask,"NAME",256,NULL,osPriorityNormal,NULL);
+  view.Init();
+  GUI_Exec();
+
+  xTaskCreate(USBMonitorTask          ,"task",256,NULL,osPriorityHigh,NULL);
+  xTaskCreate(GUITask          ,"hjhjk",1024,NULL,osPriorityNormal,NULL);
+  xTaskCreate(RTLSDRDataAquisitionTask,"task3",2048,NULL,osPriorityHigh  ,NULL);
+  xTaskCreate(FlightControlerTask,"dupa",512,NULL,osPriorityNormal  ,NULL);
+
+  xSemaphore = xSemaphoreCreateBinary();
+  messageQueue = xQueueCreate(5,sizeof(ADS_BMessage));
+  modelTimer= xTimerCreate("Timer",1000U,pdTRUE,NULL, vTimerCallback);
+  xTimerStart(modelTimer,1000);
   /* Start scheduler */
   osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-  /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
 
   }
-  /* USER CODE END 3 */
 
 }
 
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -170,12 +248,21 @@ void assert_failed(uint8_t* file, uint32_t line)
 
 #endif
 
-/**
-  * @}
-  */ 
+extern "C" void HAL_HCD_HC_NotifyURBChange_Callback(HCD_HandleTypeDef *hhcd, uint8_t chnum, HCD_URBStateTypeDef urb_state)
+{
+#if (USBH_USE_OS == 1)
+  USBH_LL_NotifyURBChange(hhcd->pData);
+#endif
 
-/**
-  * @}
-*/ 
+  UNUSED(hhcd);
+  UNUSED(chnum);
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+  if(boardMenager.GetRTLSDR().IsDeviceReady() == false) { return; }
+
+  if (urb_state == URB_DONE)
+  {
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xSemaphoreGiveFromISR( xSemaphore , &xHigherPriorityTaskWoken );
+		portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+  }
+}

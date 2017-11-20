@@ -1409,8 +1409,8 @@ int rtlsdr_open(rtlsdr_dev_t** out_dev, uint32_t index) {
     rtlsdr_set_i2c_repeater(dev, 1);
     uint8_t found = 0;
 
-    reg = rtlsdr_i2c_read_reg(dev, R820T_I2C_ADDR, R82XX_CHECK_ADDR);
-
+    //reg = rtlsdr_i2c_read_reg(dev, R820T_I2C_ADDR, R82XX_CHECK_ADDR);
+    reg = R82XX_CHECK_VAL;
     if (reg == R82XX_CHECK_VAL) {
        // DEBUG_PRINT("Found Rafael Micro R820T tuner\n");
         dev->tuner_type = RTLSDR_TUNER_R820T;

@@ -1,0 +1,29 @@
+/*
+ * Airplaine.cpp
+ *
+ *  Created on: 29.10.2017
+ *      Author: Karol
+ */
+
+#include <AircraftRecord.h>
+
+AircraftRecord::AircraftRecord(const std::string& ICAO_Address) : ICAO_Address(ICAO_Address)
+{
+	ticksToExpire = DEFAULT_LIVE_SPAN;
+	isRecordExpiered = false;
+}
+
+bool AircraftRecord::Tick()
+{
+
+	if(ticksToExpire > 0U)
+	{
+		--ticksToExpire;
+		if(ticksToExpire == 0U)
+		{
+			isRecordExpiered = true;
+		}
+
+	}
+	return isRecordExpiered;
+}

@@ -1,4 +1,0 @@
-GPIODriver.cpp:10:1:GPIODriver::GPIODriver()	8	static
-GPIODriver.cpp:16:6:void GPIODriver::WritePin(GPIOPin, GPIOPinState)	8	static
-GPIODriver.cpp:21:16:const GPIOPin& GPIODriver::GetLedPin() const	0	static
-GPIODriver.cpp:26:16:const GPIOPin& GPIODriver::GetPSOPin() const	0	static

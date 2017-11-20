@@ -1,0 +1,15 @@
+/*
+ * FlightControlModel.cpp
+ *
+ *  Created on: 28.10.2017
+ *      Author: Karol
+ */
+
+#include "FlightControl.h"
+
+
+FlightControl::FlightControl()
+{
+}
+
+

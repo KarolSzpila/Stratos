@@ -1,7 +1,0 @@
-tuner_r82xx.c:254:12:r82xx_write	48	static
-tuner_r82xx.c:419:12:r82xx_set_pll	112	static
-tuner_r82xx.c:1012:5:r82xx_set_gain	88	static
-tuner_r82xx.c:1088:5:r82xx_set_bandwidth	64	static
-tuner_r82xx.c:1157:5:r82xx_set_freq	72	static
-tuner_r82xx.c:1196:5:r82xx_standby	64	static
-tuner_r82xx.c:1305:5:r82xx_init	120	static

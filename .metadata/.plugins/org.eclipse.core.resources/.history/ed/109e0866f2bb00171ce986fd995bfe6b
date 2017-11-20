@@ -1,8 +1,0 @@
-USBDriver.cpp:18:6:void USBDriver::USBHostProcess()	0	static
-USBDriver.cpp:23:6:bool USBDriver::NewDeviceWasAttached()	0	static
-USBDriver.cpp:48:6:void USBDriver::AllocTransferPipe()	32	static
-USBDriver.cpp:32:6:void USBDriver::InitHost()	8	static
-USBDriver.cpp:63:20:USBH_StatusTypeDef USBDriver::ControlTransfer(uint8_t, uint8_t, uint16_t, uint16_t, unsigned char*, uint16_t)	24	static
-USBDriver.cpp:87:6:void USBDriver::TurnOnPSO()	8	static
-USBDriver.cpp:11:1:USBDriver::USBDriver(USBH_HandleTypeDef*, GPIODriver&)	8	static
-USBDriver.cpp:92:6:void USBDriver::TurnOfPSO()	8	static

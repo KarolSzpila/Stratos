@@ -1,0 +1,38 @@
+/*
+ * Airplaine.h
+ *
+ *  Created on: 29.10.2017
+ *      Author: Karol
+ */
+
+#ifndef FLIGHTCONTROL_AIRCRAFTRECORD_H_
+#define FLIGHTCONTROL_AIRCRAFTRECORD_H_
+
+#include "string"
+#include "ADSBMessage.h"
+
+#define DEFAULT_LIVE_SAPAN 60 //sec
+class AircraftRecord
+{
+public:
+	AircraftRecord() = default;
+	AircraftRecord(const std::string& ICAO_Address);
+
+	std::string GetICAO_Address() const {return ICAO_Address;}
+	bool IsAicraftExpired() const {return aircraftExpiered;}
+
+	void Update(const ADS_BMessage& msg);
+	void Tick();
+
+private:
+	std::string ICAO_Address;
+
+	std::string FlightName;
+	uint32_t altitude;
+
+	uint8_t leftLiveSpan;
+	bool aircraftExpiered;
+
+};
+
+#endif /* FLIGHTCONTROL_AIRCRAFTRECORD_H_ */

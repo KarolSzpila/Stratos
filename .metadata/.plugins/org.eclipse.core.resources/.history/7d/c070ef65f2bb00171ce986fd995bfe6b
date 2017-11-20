@@ -1,4 +1,0 @@
-LTDCDriver.cpp:10:1:LTDCDriver::LTDCDriver(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t)	40	static
-LTDCDriver.cpp:42:10:uint16_t LTDCDriver::GetScreenWidth() const	0	static
-LTDCDriver.cpp:47:10:uint16_t LTDCDriver::GetScreenHeight() const	0	static
-LTDCDriver.cpp:52:6:void LTDCDriver::ConfigLayer(uint8_t, uint32_t)	80	static

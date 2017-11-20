@@ -1,0 +1,37 @@
+/*
+ * FlightControlModel.cpp
+ *
+ *  Created on: 28.10.2017
+ *      Author: Karol
+ */
+
+#include "FlightControl.h"
+
+
+FlightControl::FlightControl() : aircrafts(100)
+{
+
+}
+
+
+Aircraft* FlightControl::FindAircraftByICAO_Address(const std::string& ICAO_Address)
+{
+	auto it = aircrafts.find(ICAO_Address);
+	if(it == aircrafts.end()) { return NULL;}
+
+	return &it->second;
+}
+
+void FlightControl::AddAircraft(const std::string& ICAO, const Aircraft& aircraft)
+{
+	aircrafts.insert(ICAO,aircraft);
+}
+
+void TickAircrafts()
+{
+	for(auto it = air)
+	   for( it=tab.begin(); it!=tab.end(); ++it )
+	   {
+	     cout<< *it <<'\n';
+	   }
+}

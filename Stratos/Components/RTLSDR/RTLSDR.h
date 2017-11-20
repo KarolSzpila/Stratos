@@ -90,13 +90,13 @@ public:
     		             uint32_t  tunerFrequency,
     		             uint32_t  adcSampRate);
 
-
+	void GetNewRawSamples();
 	void NotifyNewRawSampleRecived();
 	void NotifyRawSampleProcessed();
 
-	void GetNewRawSamples();
 
-	bool deviceOpen;
+
+	volatile bool IsDeviceReady() const;
 	uint8_t* GetRawSamplesFromBuffer();
 	//std::array<uint8_t,USB_IN_STREAM_SIZE>& GetRawSamplesFromBuffer();
 private:
@@ -124,6 +124,7 @@ private:
 	rtlsdr_dev_t *dev;
 
 	uint8_t buff[2048];
-	StaticCircullarBuffer<std::array<uint8_t,USB_IN_STREAM_SIZE>,USB_BUFFER_SIZE> rawSamplesBuffer;
+
+	volatile bool deviceReady;
 };
 #endif /* RTLSDR_RTLSDR_H_ */

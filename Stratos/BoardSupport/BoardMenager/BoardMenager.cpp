@@ -19,7 +19,5 @@ BoardMenager::BoardMenager() : rccDriver(),
 							   usbDriverHandle(&hUsbHostHS,gpioDriver),
 							   rtlSdrHandle(&usbDriverHandle)
 {
-
-	//rtlSdrHandle.OpenDevice(0,1090000000,2000000);
 }
 

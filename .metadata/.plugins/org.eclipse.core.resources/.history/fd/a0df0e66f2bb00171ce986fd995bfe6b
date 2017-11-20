@@ -1,3 +1,0 @@
-tuner_fc0012.c:91:5:fc0012_init	56	static
-tuner_fc0012.c:148:5:fc0012_set_params	64	static
-tuner_fc0012.c:314:5:fc0012_set_gain	32	static

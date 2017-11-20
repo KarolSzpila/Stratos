@@ -1,17 +1,36 @@
 /*
  * InterruptMenager.h
  *
- *  Created on: 28.10.2017
+ *  Created on: 07.10.2017
  *      Author: Karol
  */
 
-#ifndef INTERRUPTMENAGER_INTERRUPTMENAGER_H_
-#define INTERRUPTMENAGER_INTERRUPTMENAGER_H_
+#ifndef INTERRUPTMENAGER_H_
+#define INTERRUPTMENAGER_H_
 
-class InterruptMenager {
-public:
-	InterruptMenager();
-	virtual ~InterruptMenager();
+#include "FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+
+enum InterruptID
+{
+	USBDoneInterrupt = 0,
 };
 
-#endif /* INTERRUPTMENAGER_INTERRUPTMENAGER_H_ */
+class InterruptMenager
+{
+public:
+
+	static int const semaphoreArraySize = 1;
+
+	InterruptMenager();
+	void NotifyInterruptOccured(InterruptID interruptID);
+	bool CheckInterruptOccured(InterruptID interruptID);
+	SemaphoreHandle_t* GetSem();
+private:
+	SemaphoreHandle_t* semaphoreArray;
+};
+
+
+#endif /* INTERRUPTMENAGER_H_ */

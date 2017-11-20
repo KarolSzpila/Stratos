@@ -1,5 +1,0 @@
-main.cpp:64:6:void USBMonitorTask(void*)	16	static
-main.cpp:83:5:int main()	16	static
-main.cpp:127:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	0	static
-main.cpp:145:6:void _Error_Handler(char*, int)	0	static
-main.cpp:153:1:cpp)	0	static

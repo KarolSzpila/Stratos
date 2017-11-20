@@ -27,6 +27,7 @@ public:
 	void InitHost();
 	void USBHostProcess();
 	bool NewDeviceWasAttached();
+	bool DeviceWasDisconnected();
 
 	USBH_StatusTypeDef ControlTransfer(uint8_t request_type,
 									   uint8_t bRequest,

@@ -29,6 +29,15 @@ bool USBDriver::NewDeviceWasAttached()
 	return false;
 }
 
+bool USBDriver::DeviceWasDisconnected()
+{
+	if (usbHostHandle->gState == HOST_DEV_DISCONNECTED)
+	{
+		usbDeviceReady = false;
+		return true;
+	}
+	return false;
+}
 void USBDriver::InitHost()
 {
 	while(1)
