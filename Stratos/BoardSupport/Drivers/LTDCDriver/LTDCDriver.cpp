@@ -42,11 +42,11 @@ LTDCDriver::LTDCDriver(	uint16_t screenWidth,
 	  pLayerCfg.WindowX1 = 1024;
 	  pLayerCfg.WindowY0 = 0;
 	  pLayerCfg.WindowY1 = 600;
-	  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
+	  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_ARGB1555;
 	  pLayerCfg.Alpha = 255;
 	  pLayerCfg.Alpha0 = 0;
 	  pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
-	  pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+	  pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR1_CA;
 	  pLayerCfg.FBStartAdress = FMC_START_ADDR;
 	  pLayerCfg.ImageWidth = 1024;
 	  pLayerCfg.ImageHeight = 600;
@@ -57,6 +57,28 @@ LTDCDriver::LTDCDriver(	uint16_t screenWidth,
 	  {
 	    _Error_Handler(__FILE__, __LINE__);
 	  }
+
+	/*  LTDC_LayerCfgTypeDef pLayerCfg1;
+	  pLayerCfg1.WindowX0 = 0;
+	  pLayerCfg1.WindowX1 = 620;
+	  pLayerCfg1.WindowY0 = 0;
+	  pLayerCfg1.WindowY1 = 600;
+	  pLayerCfg1.PixelFormat = LTDC_PIXEL_FORMAT_ARGB1555;
+	  pLayerCfg1.Alpha = 255;
+	  pLayerCfg1.Alpha0 = 0;
+	  pLayerCfg1.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+	  pLayerCfg1.BlendingFactor2 = LTDC_BLENDING_FACTOR1_CA;
+	  pLayerCfg1.FBStartAdress = FMC_START_ADDR + 1024*600;
+	  pLayerCfg1.ImageWidth = 620;
+	  pLayerCfg1.ImageHeight = 600;
+	  pLayerCfg1.Backcolor.Blue = 0;
+	  pLayerCfg1.Backcolor.Green = 0;
+	  pLayerCfg1.Backcolor.Red = 0;
+		  if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg1, 0) != HAL_OK)
+		  {
+		    _Error_Handler(__FILE__, __LINE__);
+		  }
+*/
 }
 
 
@@ -72,7 +94,7 @@ uint16_t LTDCDriver::GetScreenHeight() const
 
 void LTDCDriver::ConfigLayer(uint8_t layerIndex, uint32_t bufferAdress)
 {
-
+/*
 	LTDC_LayerCfgTypeDef pLayerCfg;
 	pLayerCfg.WindowX0 = 0;
 	pLayerCfg.WindowX1 = screenWidth;
@@ -94,6 +116,6 @@ void LTDCDriver::ConfigLayer(uint8_t layerIndex, uint32_t bufferAdress)
 	  _Error_Handler(__FILE__, __LINE__);
 	}
 
-
+*/
 }
 

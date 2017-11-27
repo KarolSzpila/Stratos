@@ -2,22 +2,23 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="msg." key="selection"/>
+		<item value="WM_Get" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="WM_Get"/>
+			<item value="pLayerCfg"/>
 			<item value="mm-&gt;"/>
 			<item value="style"/>
 			<item value="uxPriority"/>
 			<item value="BULK_TIMEOUT"/>
 			<item value="FRAME_BUFFER_ADDRESS"/>
 			<item value="VRAM_ADDR"/>
-			<item value="BUTTON_Callback"/>
-			<item value="_CreateIndirect"/>
 		</list>
 		<list key="replacehistory">
+			<item value="pLayerCfg1"/>
 			<item value="msg."/>
 			<item value="VRAM_ADDR"/>
 			<item value=""/>
@@ -25,7 +26,6 @@
 			<item value="fixed_size_unordered_map"/>
 			<item value="RT82XX_Handle"/>
 			<item value="magnitude"/>
-			<item value="found = 1;"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

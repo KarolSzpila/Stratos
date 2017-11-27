@@ -6,6 +6,7 @@
  */
 
 #include "FlightControlControler.h"
+#include "stm32f7xx_hal.h"
 
 FlightControlControler::FlightControlControler(FlightControl& model,FlightCotrolView& view) : model(model), view(view)
 {
@@ -42,11 +43,17 @@ void FlightControlControler::UpdateRecord(const ADS_BMessage& msg, AircraftRecor
 	 case DF17:
 		 if (msg.metype >= 1 && msg.metype <= 4)
 		 {
-
+			 record.SetFlightName(msg.flight);
 		 }
 		 else if(msg.metype >= 9 && msg.metype <= 18)
 		 {
 			 record.SetAltitude(msg.altitude);
+			 record.decodeCPR(msg.fflag,msg.raw_latitude,msg.raw_longitude);
+
+		 }
+		 else if(msg.metype == 19 && msg.mesub >= 1 && msg.mesub <= 4)
+		 {
+			 record.SetVelocityAndHeading(msg.velocity,msg.heading);
 		 }
 		 break;
 	 }

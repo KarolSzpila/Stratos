@@ -33,7 +33,7 @@ struct ADS_BMessage
 	    int metype;                 /* Extended squitter message type. */
 	    int mesub;                  /* Extended squitter message subtype. */
 	    int heading_is_valid;
-	    int heading;
+	    float heading;
 	    int aircraft_type;
 	    int fflag;                  /* 1 = Odd, 0 = Even CPR message. */
 	    int tflag;                  /* UTC synchronized? */

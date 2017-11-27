@@ -82,13 +82,14 @@ void MX_LTDC_Init(uint16_t screenWidth,
   hltdc.Init.TotalWidth = hsync + horizontalBP + screenWidth + horizontalFP - 1;
   hltdc.Init.TotalHeigh = vsync + verticalBP + screenHeight + verticalFP - 1;
   hltdc.Init.Backcolor.Blue = 0;
-  hltdc.Init.Backcolor.Green = 255;
+  hltdc.Init.Backcolor.Green = 0;
   hltdc.Init.Backcolor.Red = 0;
   if (HAL_LTDC_Init(&hltdc) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
+  HAL_LTDC_ProgramLineEvent(&hltdc, 0);
+  HAL_LTDC_EnableDither(&hltdc);
 
 }
 
@@ -213,7 +214,10 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* ltdcHandle)
     HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /* USER CODE BEGIN LTDC_MspInit 1 */
-
+    HAL_NVIC_SetPriority(LTDC_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(LTDC_IRQn);
+    HAL_NVIC_SetPriority(LTDC_ER_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(LTDC_ER_IRQn);
   /* USER CODE END LTDC_MspInit 1 */
   }
 }

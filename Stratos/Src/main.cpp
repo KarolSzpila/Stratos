@@ -66,12 +66,15 @@
 #include "FlightControlControler.h"
 #include "timers.h"
 
-BoardMenager boardMenager;
+#define WM_SUPPORT_TRANSPARENCY
+ BoardMenager boardMenager;
 
 
 SemaphoreHandle_t xSemaphore = NULL;
 QueueHandle_t messageQueue = NULL;
 TimerHandle_t modelTimer = NULL;
+TimerHandle_t radarRefreshTimer = NULL;
+
 
 
 FlightCotrolView view;
@@ -120,15 +123,15 @@ void FlightControlerTask(void *)
 	{
 		if(ticks > 0)
 		{
-			controler.UpdateTicksCount(1);
-			ticks--;
+			uint32_t ticksTmp = ticks;
+			controler.UpdateTicksCount(ticksTmp);
+			ticks -= ticksTmp;
 		}
 		if(xQueueReceive(messageQueue,&msg,10) == pdTRUE)
 		{
 			controler.PassNewMessage(msg);
 		}
 		controler.UpdateView();
-
 	}
 }
 
@@ -141,7 +144,7 @@ void GUITask(void*)
 	{
 		GUI_Exec();
 
-		vTaskDelay(10);
+		vTaskDelay(1);
 
 	}
 }
@@ -149,9 +152,13 @@ void GUITask(void*)
 
 void vTimerCallback(TimerHandle_t xTimer)
 {
-	//controler.NotifyTimerTickOccured();
 	HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_15);
 	ticks++;
+}
+
+void vTimer2Callback(TimerHandle_t xTimer)
+{
+	view.UpdateRadar();
 }
 
 int main(void)
@@ -175,12 +182,14 @@ int main(void)
   xTaskCreate(USBMonitorTask          ,"task",256,NULL,osPriorityHigh,NULL);
   xTaskCreate(GUITask          ,"hjhjk",1024,NULL,osPriorityNormal,NULL);
   xTaskCreate(RTLSDRDataAquisitionTask,"task3",2048,NULL,osPriorityHigh  ,NULL);
-  xTaskCreate(FlightControlerTask,"dupa",512,NULL,osPriorityNormal  ,NULL);
+  xTaskCreate(FlightControlerTask,"dupa",2048,NULL,osPriorityNormal  ,NULL);
 
   xSemaphore = xSemaphoreCreateBinary();
   messageQueue = xQueueCreate(5,sizeof(ADS_BMessage));
   modelTimer= xTimerCreate("Timer",1000U,pdTRUE,NULL, vTimerCallback);
   xTimerStart(modelTimer,1000);
+  radarRefreshTimer= xTimerCreate("Timer2",1000U,pdTRUE,NULL, vTimer2Callback);
+  xTimerStart(radarRefreshTimer,1000);
   /* Start scheduler */
   osKernelStart();
 

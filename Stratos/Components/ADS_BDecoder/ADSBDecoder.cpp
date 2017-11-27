@@ -370,22 +370,18 @@ void ADS_BDecoder::DecodeMessage(ADS_BMessage* mm)
                    if (mm->velocity) {
                        int ewv = mm->ew_velocity;
                        int nsv = mm->ns_velocity;
-                       double heading;
 
                        if (mm->ew_dir) ewv *= -1;
                        if (mm->ns_dir) nsv *= -1;
-                       heading = atan2(ewv,nsv);
+                       mm->heading = atan2(ewv,nsv);
 
-                       /* Convert to degrees. */
-                       mm->heading = heading * 360 / (M_PI*2);
-                       /* We don't want negative values but a 0-360 scale. */
-                       if (mm->heading < 0) mm->heading += 360;
+
                    } else {
-                       mm->heading = 0;
+                       mm->heading = 0.0F;
                    }
                } else if (mm->mesub == 3 || mm->mesub == 4) {
                    mm->heading_is_valid = msg[5] & (1<<2);
-                   mm->heading = (360.0/128) * (((msg[5] & 3) << 5) |
+                   mm->heading = (360.0/128.0) * float(((msg[5] & 3) << 5) |
                                                  (msg[6] >> 3));
                }
            }
