@@ -13,12 +13,27 @@ FlightControlControler::FlightControlControler(FlightControl& model,FlightCotrol
 	modelChanged = false;
 }
 
+void FlightControlControler::NotifyDisconnected()
+{
+	view.ShowWarningMsg();
+}
+
+void FlightControlControler::NotifyConnected()
+{
+	view.HideWarningMsg();
+}
+
 void FlightControlControler::PassNewMessage(const ADS_BMessage& msg)
 {
 	std::string ICAO_Address = GetICAO_AddresAsString(msg);
 	bool recordExist = false;
 	std::list<AircraftRecord>::iterator recordIt;
 
+	if(!msg.crcok)
+	{
+		//view.UpdateStats(msg);
+		return;
+	}
 	recordExist = model.FindAircraftByICAO_Address(ICAO_Address,recordIt);
 
 	if(recordExist == false)
@@ -32,7 +47,7 @@ void FlightControlControler::PassNewMessage(const ADS_BMessage& msg)
 	{
 		UpdateRecord(msg,*recordIt);
 	}
-
+	//view.UpdateStats(msg);
 	modelChanged = true;
 }
 
@@ -41,6 +56,7 @@ void FlightControlControler::UpdateRecord(const ADS_BMessage& msg, AircraftRecor
 	 switch(msg.msgtype)
 	 {
 	 case DF17:
+
 		 if (msg.metype >= 1 && msg.metype <= 4)
 		 {
 			 record.SetFlightName(msg.flight);
@@ -76,9 +92,6 @@ void FlightControlControler::UpdateTicksCount(uint32_t ticks)
 
 void FlightControlControler::UpdateView()
 {
-	if(modelChanged == true)
-	{
 		view.Update(model.GetAllRecords());
 		modelChanged = false;
-	}
 }

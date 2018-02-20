@@ -2,12 +2,13 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="WM_Get" key="selection"/>
+		<item value="Draw" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="draw"/>
 			<item value="WM_Get"/>
 			<item value="pLayerCfg"/>
 			<item value="mm-&gt;"/>
@@ -15,7 +16,6 @@
 			<item value="uxPriority"/>
 			<item value="BULK_TIMEOUT"/>
 			<item value="FRAME_BUFFER_ADDRESS"/>
-			<item value="VRAM_ADDR"/>
 		</list>
 		<list key="replacehistory">
 			<item value="pLayerCfg1"/>

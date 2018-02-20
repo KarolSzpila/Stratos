@@ -1,4 +1,4 @@
-/*
+/*+9+9
  * FlightCotrolView.h
  *
  *  Created on: 29.10.2017
@@ -18,15 +18,17 @@ class FlightCotrolView
 public:
 	FlightCotrolView();
 	void ShowNewAircraft(const AircraftRecord& aircraft);
-	//void UpdateAircraft(const Aircraft& aircraft);
 	void Update(const std::list<AircraftRecord>& aircrafts);
 	void Init();
 	void UpdateRadar();
+	void UpdateStats(const ADS_BMessage& msg);
+
+
+	void ShowWarningMsg();
+	void HideWarningMsg();
 private:
 	int rows;
 
-	float latRef;
-	float lonRef;
 };
 
 #endif /* FLIGHTCONTROLVIEW_FLIGHTCOTROLVIEW_H_ */

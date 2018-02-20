@@ -54,6 +54,7 @@ Purpose     : Display controller configuration (single layer)
 #include "GUIDRV_Lin.h"
 #include "stm32f767xx.h"
 #include "stm32f7xx_hal.h"
+#include "string.h"
 /*********************************************************************
 *
 *       Layer configuration (to be modified)
@@ -66,7 +67,10 @@ Purpose     : Display controller configuration (single layer)
 #define XSIZE_PHYS 1024
 #define YSIZE_PHYS 600
 
-static uint32_t buffer_index;
+static uint32_t pending_buffer_index = 0;
+static uint8_t bufferChanged = 0;
+static int32_t pending_buffer = 0;
+void * pppData;
 //
 // Color conversion
 //
@@ -123,9 +127,23 @@ static uint32_t buffer_index;
 *   display driver configuration.
 *   
 */
-#define FRAME_BUFFER_ADDRESS_LAYER_1 0xD0000000
-#define FRAME_BUFFER_ADDRESS_LAYER_0 0xD0000000 + (1024*600)
+//#define FRAME_BUFFER_ADDRESS_LAYER_1 0xD0000000
+//#define FRAME_BUFFER_ADDRESS_LAYER_0 0xD0000000 + (1024*600/2)
 
+static void _CopyBuffer(int LayerIndex, int IndexSrc, int IndexDst)
+{
+	unsigned long BufferSize, AddrSrc, AddrDst;
+	//
+	// Calculate the size of one frame buffer
+	//
+	BufferSize = (XSIZE_PHYS * YSIZE_PHYS * 16) / 8;
+	//
+	// Calculate source- and destination address
+	//
+	AddrSrc = VRAM_ADDR + BufferSize * IndexSrc;
+	AddrDst = VRAM_ADDR + BufferSize * IndexDst;
+	memcpy((void *)AddrDst, (void *)AddrSrc, BufferSize);
+}
 
 void LCD_X_Config(void) {
 
@@ -138,6 +156,7 @@ void LCD_X_Config(void) {
  // Set display driver and color conversion for 1st layer
  //
  GUI_DEVICE_CreateAndLink(GUIDRV_LIN_16, GUICC_M1555I, 0, 0);
+ LCD_SetDevFunc(0, LCD_DEVFUNC_COPYBUFFER, (void (*)())_CopyBuffer);
  //
  // Display driver configuration, required for Lin-driver
  //
@@ -220,9 +239,12 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
   case LCD_X_SHOWBUFFER: {
     //
     // Required if multiple buffers are used. The 'Index' element of p contains the buffer index.
+
     LCD_X_SHOWBUFFER_INFO * p;
     p = (LCD_X_SHOWBUFFER_INFO *)pData;
-    //...
+    //
+    pending_buffer = p->Index;
+    pppData = pData;
     return 0;
   }
   case LCD_X_SETLUTENTRY: {
@@ -258,5 +280,39 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
 
 
 void HAL_LTDC_LineEvenCallback(LTDC_HandleTypeDef *hltdc) {
-	HAL_LTDC_ProgramLineEvent(hltdc, 0); //Define the position of the line interrupt
+
+	if(pending_buffer >= 0)
+	{
+		unsigned long BufferSize, Addr;
+		BufferSize = (XSIZE_PHYS * YSIZE_PHYS * 16) / 8;
+		Addr = VRAM_ADDR + BufferSize * pending_buffer;
+		__HAL_LTDC_LAYER(hltdc, 1)->CFBAR = Addr;
+		__HAL_LTDC_RELOAD_CONFIG(hltdc);
+		GUI_MULTIBUF_Confirm(pending_buffer);
+		pending_buffer = -1;
+	}
+	/*
+	if(bufferChanged == 1)
+	{
+		bufferChanged = 0;
+		if(pending_buffer_index == 0)
+		{
+			U32 Addr = FRAME_BUFFER_ADDRESS_LAYER_0;
+			__HAL_LTDC_LAYER(hltdc, 0)->CFBAR = Addr;
+			__HAL_LTDC_RELOAD_CONFIG(hltdc);
+
+		   GUI_MULTIBUF_ConfirmEx(0, pending_buffer_index);
+		}
+		else if(pending_buffer_index == 1)
+		{
+			U32 Addr = FRAME_BUFFER_ADDRESS_LAYER_1;
+			__HAL_LTDC_LAYER(hltdc, 0)->CFBAR = Addr;
+			__HAL_LTDC_RELOAD_CONFIG(hltdc);
+
+		   GUI_MULTIBUF_ConfirmEx(0, pending_buffer_index);
+
+		}
+	}
+	*/
+	HAL_LTDC_ProgramLineEvent(hltdc, 0);
 }

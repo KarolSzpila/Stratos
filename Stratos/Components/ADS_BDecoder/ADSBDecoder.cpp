@@ -256,13 +256,14 @@ void ADS_BDecoder::DecodeMessage(ADS_BMessage* mm)
     mm->crcok = (mm->crc == crc2);
 
     if (!mm->crcok &&
-         (mm->msgtype == 11 || mm->msgtype == 17))
+         (mm->msgtype == 17))
      {
          if ((mm->errorbit = FixSingleBitErrors(msg,mm->msgbits)) != -1) {
              mm->crc = CalcMsgChecksum(msg,mm->msgbits);
              mm->crcok = 1;
          }else
          {
+        	 xQueueSend(messageQueue, mm, portMAX_DELAY);
         	 return;
          }
      }

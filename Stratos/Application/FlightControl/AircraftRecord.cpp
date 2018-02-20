@@ -6,7 +6,7 @@
  */
 
 #include <AircraftRecord.h>
-#include <math.h>
+#include <cmath>
 
 AircraftRecord::AircraftRecord(const std::string& ICAO_Address) : ICAO_Address(ICAO_Address)
 {
@@ -69,11 +69,12 @@ void AircraftRecord::SetVelocityAndHeading(const int& velocity, const float& hea
 	headStr = std::string(buff);
 	velocityAndHeadingKnown = true;
 	ticksToExpire = DEFAULT_LIVE_SPAN;
+
+	this->velocity = velocity;
+	this->heading = heading;
 }
 void AircraftRecord::decodeCPR(const int& fflag, const int& rawLat, const int& rawLon)
 {
-	float latRef = 51.253777F;
-	float lonRef = 15.395414F;
 	float cprLat = float(rawLat)/131072.0F;
 	float cprLon = float(rawLon)/131072.0F;
 
@@ -107,10 +108,54 @@ void AircraftRecord::decodeCPR(const int& fflag, const int& rawLat, const int& r
 	char buff[256];
 	sprintf(buff,"%.4fN %.4fE",latitude,lognitude);
 	positionStr = std::string(buff);
+	positionStr.replace(2,1,"°");
+	positionStr.insert(5,"'");
+	positionStr.insert(8,"\"");
+
+	positionStr.replace(13,1,"°");
+	positionStr.insert(16,"'");
+	positionStr.insert(19,"\"");
 	ticksToExpire = DEFAULT_LIVE_SPAN;
 
 }
 
+
+void AircraftRecord::CalcNewPosition(int time)
+{
+	if((velocityAndHeadingKnown == false) || ( altitudeKnown == false) )
+		return;
+    const float velInMs = velocity * 0.514444444;
+	const float dist = velInMs * (float)time;
+	const float earthR = 6371000.0F;
+
+	float distRatio = dist / earthR;
+	float distRatioSin = std::sin(distRatio);
+	float distRatioCos = std::cos(distRatio);
+
+	float startLatRad = latitude * M_PI/180.0F;
+	float startLonRad = lognitude * M_PI/180.0F;
+
+	float startLatCos = std::cos(startLatRad);
+	float startLatSin = std::sin(startLatRad);
+
+	float endLatRads = std::asin((startLatSin * distRatioCos) + (startLatCos * distRatioSin * std::cos(heading)));
+	float endLonRads = startLonRad + std::atan2(std::sin(heading) * distRatioSin * startLatCos,  distRatioCos - startLatSin * std::sin(endLatRads));
+
+	latitude = endLatRads * 180.0F / M_PI;
+	lognitude = endLonRads * 180.0F / M_PI;
+
+	char buff[256];
+	sprintf(buff,"%.4fN %.4fE",latitude,lognitude);
+	positionStr = std::string(buff);
+	positionStr.replace(2,1,"°");
+	positionStr.insert(5,"'");
+	positionStr.insert(8,"\"");
+
+	positionStr.replace(13,1,"°");
+	positionStr.insert(16,"'");
+	positionStr.insert(19,"\"");
+
+}
 float AircraftRecord::CprMod(const float& x, const float& y)
 {
 	return (x - y * floor(x/y));

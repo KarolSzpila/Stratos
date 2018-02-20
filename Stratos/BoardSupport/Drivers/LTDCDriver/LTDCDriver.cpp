@@ -57,8 +57,8 @@ LTDCDriver::LTDCDriver(	uint16_t screenWidth,
 	  {
 	    _Error_Handler(__FILE__, __LINE__);
 	  }
-
-	/*  LTDC_LayerCfgTypeDef pLayerCfg1;
+/*
+	  LTDC_LayerCfgTypeDef pLayerCfg1;
 	  pLayerCfg1.WindowX0 = 0;
 	  pLayerCfg1.WindowX1 = 620;
 	  pLayerCfg1.WindowY0 = 0;
@@ -78,7 +78,7 @@ LTDCDriver::LTDCDriver(	uint16_t screenWidth,
 		  {
 		    _Error_Handler(__FILE__, __LINE__);
 		  }
-*/
+		  */
 }
 
 

@@ -66,7 +66,6 @@
 #include "FlightControlControler.h"
 #include "timers.h"
 
-#define WM_SUPPORT_TRANSPARENCY
  BoardMenager boardMenager;
 
 
@@ -87,7 +86,7 @@ void USBMonitorTask(void*)
 {
 	USBDriver& usbDriverHandle = boardMenager.GetUSB();
 	RTLSDR& rtlSdrHandle =  boardMenager.GetRTLSDR();
-
+	//controler.NotifyDisconnected();
 	while(1)
 	{
 		usbDriverHandle.USBHostProcess();
@@ -96,7 +95,12 @@ void USBMonitorTask(void*)
 			vTaskSuspendAll();
 			usbDriverHandle.InitHost();
 			rtlSdrHandle.OpenDevice(0,1090000000,2000000);
+			//controler.NotifyConnected();
 			xTaskResumeAll();
+		}
+		if(usbDriverHandle.DeviceWasDisconnected() == true)
+		{
+			//controler.NotifyDisconnected();
 		}
 		vTaskDelay(100);
 	}
@@ -116,6 +120,7 @@ void RTLSDRDataAquisitionTask(void*)
 	}
 }
 
+
 void FlightControlerTask(void *)
 {
 	ADS_BMessage msg;
@@ -126,12 +131,12 @@ void FlightControlerTask(void *)
 			uint32_t ticksTmp = ticks;
 			controler.UpdateTicksCount(ticksTmp);
 			ticks -= ticksTmp;
+			controler.UpdateView();
 		}
 		if(xQueueReceive(messageQueue,&msg,10) == pdTRUE)
 		{
 			controler.PassNewMessage(msg);
 		}
-		controler.UpdateView();
 	}
 }
 
@@ -144,7 +149,7 @@ void GUITask(void*)
 	{
 		GUI_Exec();
 
-		vTaskDelay(1);
+		vTaskDelay(100);
 
 	}
 }
@@ -179,11 +184,10 @@ int main(void)
   view.Init();
   GUI_Exec();
 
-  xTaskCreate(USBMonitorTask          ,"task",256,NULL,osPriorityHigh,NULL);
+  xTaskCreate(USBMonitorTask          ,"task",1024,NULL,osPriorityHigh,NULL);
   xTaskCreate(GUITask          ,"hjhjk",1024,NULL,osPriorityNormal,NULL);
   xTaskCreate(RTLSDRDataAquisitionTask,"task3",2048,NULL,osPriorityHigh  ,NULL);
   xTaskCreate(FlightControlerTask,"dupa",2048,NULL,osPriorityNormal  ,NULL);
-
   xSemaphore = xSemaphoreCreateBinary();
   messageQueue = xQueueCreate(5,sizeof(ADS_BMessage));
   modelTimer= xTimerCreate("Timer",1000U,pdTRUE,NULL, vTimerCallback);
@@ -191,6 +195,8 @@ int main(void)
   radarRefreshTimer= xTimerCreate("Timer2",1000U,pdTRUE,NULL, vTimer2Callback);
   xTimerStart(radarRefreshTimer,1000);
   /* Start scheduler */
+
+
   osKernelStart();
 
   while (1)

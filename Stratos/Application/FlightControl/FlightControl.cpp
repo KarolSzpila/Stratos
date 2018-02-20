@@ -51,6 +51,7 @@ bool FlightControl::TickAllRecords(uint32_t ticks)
 		}
 		else
 		{
+			it->CalcNewPosition(ticks);
 			it++;
 		}
 	}

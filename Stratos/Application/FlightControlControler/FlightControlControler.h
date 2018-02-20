@@ -31,6 +31,9 @@ public:
 
 	void UpdateTicksCount(uint32_t ticks);
 	void UpdateView();
+
+	void NotifyDisconnected();
+	void NotifyConnected();
 private:
 
 	FlightControl& model;

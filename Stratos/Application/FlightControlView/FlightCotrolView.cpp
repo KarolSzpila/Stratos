@@ -33,11 +33,17 @@
 #define ID_LISTVIEW_0 (GUI_ID_USER + 0x01)
 #define ID_IMAGE_0 (GUI_ID_USER + 0x02)
 #define ID_LISTVIEW_1 (GUI_ID_USER + 0x03)
+#define ID_SCROLLBAR_0 (GUI_ID_USER + 0x04)
 
 #define ID_IMAGE_0_IMAGE_0  0x00
 #include "DIALOG.h"
 #include "string"
 #include "FlightCotrolView.h"
+#include "cmath"
+#include "MESSAGEBOX.h"
+
+#define COVERAGE 120 // in  nM
+
 // USER START (Optionally insert additional defines)
 // USER END
 
@@ -58,6 +64,7 @@
 WM_HWIN aircraftsLitView;
 WM_HWIN radarImage;
 WM_HWIN radar;
+WM_HWIN statisticListView;
 std::list<AircraftRecord>* pAircrafts = NULL;
 //extern const U8 _acImage_0[76390];
 
@@ -75,19 +82,67 @@ GUI_CONST_STORAGE GUI_BITMAP bmbig_airplain = {
 char b[64];
 int count = 0;
 
+float calcDistance(const float& lat1,const float lon1, const float& lat2,const float& lon2)
+{
+    float earthR = 6371000.0F;
+    float lat1Rad = lat1 * M_PI/180.0F;
+    float lat2Rad = lat2 * M_PI/180.0F;
+
+    float dLat12 = (lat2-lat1)* M_PI/180.0F;
+    float dLon12 = (lon2-lon1)* M_PI/180.0F;
+
+    float a = std::sin(dLat12*0.5) * std::sin(dLat12*0.5)
+            + (std::cos(lat1Rad) * std::cos(lat2Rad) *
+            std::sin(dLon12*0.5) * std::sin(dLon12*0.5));
+
+
+    float c = 2.0* std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
+
+    float d = earthR * c;
+    return d;
+}
+
+
+float calcBear(const float& lat1,const float lon1, const float& lat2,const float& lon2)
+{
+	float y = std::sin(lon2 - lon1) * std::cos(lat2);
+	float x = std::cos(lat1) * std::sin(lat2) - std::sin(lat1)*std::cos(lat2)*std::cos(lon2-lon1);
+	float hdg = std::atan2(y,x);
+	return hdg;
+}
+
 void DisplayAircraft(const AircraftRecord& record)
 {
-	const float NmPerPixel = 180.0F/520.0;
-	const float latRef = 51.253777F;
-	const float lonRef = 15.395414F;
-	float latDiff = (latRef - record.GetLat()) * 60.0F;
-	float lonDiff = (lonRef - record.GetLon()) * -60.0F;
 
-	int x = lonDiff/NmPerPixel + xCenter;
-	int y = latDiff/NmPerPixel + yCenter;
+	const float NmPerPixel = COVERAGE*2.0F/520.0;
+	float dNm  = calcDistance(latRef, lonRef, record.GetLat(), record.GetLon()) * 0.000539956803F;
 
-	GUI_DrawCircle(x,y ,3);
-	GUI_DispStringAt(record.GetICAO_Address().c_str(), x, y - 10 );
+	int y = dNm/NmPerPixel;
+	int x = 0;
+	float deg = calcBear(record.GetLat(), record.GetLon(), latRef, lonRef);
+
+	float xEnd = (x*std::cos(deg) - y*std::sin(deg)) + xCenter;
+	float yEnd = (y*std::cos(deg) + x*std::sin(deg)) + yCenter;
+
+
+	GUI_SetColor(0x1594bf);
+	GUI_DrawCircle(xEnd,yEnd ,3);
+
+	float x1 = 0.0;
+	float y1 = -10.0;
+	deg =  record.GetHeading();
+	float x2 = x1*std::cos(deg) - y1*std::sin(deg);
+	float y2 = y1*std::cos(deg) + x1*std::sin(deg);
+	GUI_SetPenSize(2);
+	GUI_DrawLine(xEnd,yEnd,xEnd + x2,yEnd+y2);
+
+	GUI_DispStringAt(record.GetICAO_Address().c_str(), xEnd, yEnd - 12 );
+
+}
+
+void DrawRadar()
+{
+
 
 }
 void cbImage(WM_MESSAGE * pMsg)
@@ -98,26 +153,34 @@ void cbImage(WM_MESSAGE * pMsg)
 	  {
 
 		//IMAGE_Callback(pMsg);
-
 		GUI_SetColor(0x3ae635);
 		GUI_SetBkColor(GUI_BLACK);
-
 		GUI_DrawCircle(307,301,1);
 		GUI_DrawCircle(307,301,88);
 		GUI_DrawCircle(307,301,88*2);
 		GUI_DrawCircle(307,301,88*3);
+		sprintf(b,"%d Nm",COVERAGE/3);
+		GUI_DispStringAt(b, 363, 297);
+		sprintf(b,"%d Nm",(2*COVERAGE/3));
+		GUI_DispStringAt(b, 451, 297);
+		sprintf(b,"%d Nm",COVERAGE);
+		GUI_DispStringAt(b, 539 - 6, 297);
+		float x = 0.0;
+		float y = -(264.0 + 15);
 
-		sprintf(b,"15 Nm");
-		GUI_DispStringAt(b, 365, 297);
-		sprintf(b,"30 Nm");
-		GUI_DispStringAt(b, 457, 297);
-		sprintf(b,"45 Nm");
-		GUI_DispStringAt(b, 548, 297);
+		for(int i = 0; i < 360; i+=10)
+		{
+	        float deg = i * M_PI/180.0;
+	        float x1 = x*std::cos(deg) - y*std::sin(deg);
+	        float y1 = y*std::cos(deg) + x*std::sin(deg);
+			sprintf(b,"%d°",i);
+			GUI_DispStringAt(b, x1 + xCenter - 9,y1 + yCenter -4);
+		}
 		if(pAircrafts != NULL)
 			{
 				for(auto it = pAircrafts->begin(); it != pAircrafts->end(); it++)
 				{
-					if(it->altitudeKnown == true)
+					if((it->altitudeKnown == true) && (it->velocityAndHeadingKnown == true))
 					{
 						DisplayAircraft(*it);
 					}
@@ -141,24 +204,18 @@ void cbWin(WM_MESSAGE * pMsg)
 
 	  case WM_PAINT:
 	  {
-	    //
-	    // Handle the default drawing by the default callback
-		GUI_SetColor(GUI_TRANSPARENT);
-		GUI_FillRect(0,0,620,600);
-		GUI_SetColor(0x3ae635);
-		GUI_SetBkColor(GUI_BLACK);
 
-		GUI_DrawCircle(307,301,1);
-		if(pAircrafts != NULL)
-		{
-			for(auto it = pAircrafts->begin(); it != pAircrafts->end(); it++)
-			{
-				if(it->altitudeKnown == true)
-				{
-					DisplayAircraft(*it);
-				}
-			}
-		}
+		  MESSAGEBOX_Callback(pMsg);
+		  /*
+			GUI_SetColor(0x3ae635);
+			GUI_SetBkColor(GUI_BLACK);
+			GUI_SetFont(GUI_FONT_8X16);
+		  GUI_RECT pRect;
+		  WM_GetClientRectEx(pMsg->hWin,&pRect);
+
+		  GUI__DispStringInRect("SDR device not found",&pRect,GUI_TA_HCENTER | GUI_TA_VCENTER,50);
+		  */
+		  WM_DefaultProc(pMsg);
 	  }
 	    break;
 	  default:
@@ -179,9 +236,10 @@ void cbWin(WM_MESSAGE * pMsg)
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 1024, 600, 0, 0x0, 0 },
-  { LISTVIEW_CreateIndirect, "Listview", ID_LISTVIEW_0, 620, 0, 404, 900, 0, 0x0, 0 },
-  //{ LISTVIEW_CreateIndirect, "Listview", ID_LISTVIEW_1, 620, 290, 404, 600, 0, 0x0, 0 },
-  { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 0, 0, 620, 600, 0, 0, 0 },
+  { LISTVIEW_CreateIndirect, "Listview", ID_LISTVIEW_0, 608, 0, 404, 600, 0, 0x0, 0 },
+  //{ LISTVIEW_CreateIndirect, "Listview1", ID_LISTVIEW_1, 620, 550, 404, 50, 0, 0x0, 0 },
+  { SCROLLBAR_CreateIndirect, "Scrollbar", ID_SCROLLBAR_0, 1012, 0, 12, 600, 8, 0x0, 0 },
+  { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 0, 0, 608, 600, 0, 0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -222,6 +280,7 @@ static const void * _GetImageById(U32 Id, U32 * pSize) {
 
 #include "MESSAGEBOX.h"
 WM_HWIN hWin0;
+WM_HWIN hBox;
 void DialogCallback(WM_MESSAGE * pMsg)  {
   const void * pData;
   WM_HWIN      hItem;
@@ -244,91 +303,199 @@ void DialogCallback(WM_MESSAGE * pMsg)  {
 
     hItem = WM_GetDialogItem(pMsg->hWin, ID_LISTVIEW_0);
     aircraftsLitView = hItem;
+    HEADER_SetTextColor(LISTVIEW_GetHeader(aircraftsLitView),0x3ae635);
+    //HEADER_SetBkColor(LISTVIEW_GetHeader(aircraftsLitView),0x3ae635);
     LISTVIEW_SetBkColor(aircraftsLitView,LISTVIEW_CI_UNSEL,0x000000);
     LISTVIEW_SetTextColor(aircraftsLitView,LISTVIEW_CI_UNSEL,0x3ae635);
-    HEADER_SetTextColor(LISTVIEW_GetHeader(aircraftsLitView),0x3ae635);
-    HEADER_SetBkColor(LISTVIEW_GetHeader(aircraftsLitView),0x000000);
+    WIDGET_SetEffect(aircraftsLitView,&WIDGET_Effect_Simple);
 
 
-    LISTVIEW_AddColumn(hItem, 80, "ICAO Address", GUI_TA_HCENTER | GUI_TA_VCENTER);
+
+
+    LISTVIEW_AddColumn(hItem, 60, "ICAO Addr", GUI_TA_HCENTER | GUI_TA_VCENTER);
     LISTVIEW_SetGridVis(hItem, 1);
+
     LISTVIEW_AddColumn(hItem, 60, "Altitide", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 104, "Position", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 124, "Position", GUI_TA_HCENTER | GUI_TA_VCENTER);
     LISTVIEW_AddColumn(hItem, 50, "Velocity", GUI_TA_HCENTER | GUI_TA_VCENTER);
     LISTVIEW_AddColumn(hItem, 50, "Heading", GUI_TA_HCENTER | GUI_TA_VCENTER);
     LISTVIEW_AddColumn(hItem, 60, "Flight name", GUI_TA_HCENTER | GUI_TA_VCENTER);
-/*
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_LISTVIEW_1);
-    LISTVIEW_AddColumn(hItem, 80, "ICAO Address", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_SetGridVis(hItem, 1);
-    LISTVIEW_AddColumn(hItem, 60, "Altitide", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 104, "Position", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 50, "Velocity", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 50, "Heading", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 60, "Flight name", GUI_TA_HCENTER | GUI_TA_VCENTER);
-*/
-
-
+    //WM_SetCallback(LISTVIEW_GetHeader(aircraftsLitView),cbList);
 
     hItem = WM_GetDialogItem(pMsg->hWin, ID_IMAGE_0);
     radarImage = hItem;
     WM_SetCallback(radarImage,cbImage);
 
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_LISTVIEW_1);
+
+   // statisticListView = hItem;
+    //LISTVIEW_SetBkColor(statisticListView,LISTVIEW_CI_UNSEL,0x000000);
+   // LISTVIEW_SetTextColor(statisticListView,LISTVIEW_CI_UNSEL,0x3ae635);
+
+
+    //HEADER_SetTextColor(LISTVIEW_GetHeader(statisticListView),0x3ae635);
+    //HEADER_SetBkColor(LISTVIEW_GetHeader(statisticListView),0x000000);
+    //HEADER_SetHeight(LISTVIEW_GetHeader(statisticListView), HEADER_GetHeight(LISTVIEW_GetHeader(statisticListView)) + 15);
+
+    /*
+    LISTVIEW_AddColumn(hItem, 81, "ADS-B \n Recived", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_SetGridVis(hItem, 1);
+    LISTVIEW_AddColumn(hItem, 81, "Velocity \n msg", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 81, "Position \n odd msg", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 81, "Position \n even msg", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 80, "Identity \n msg", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddRow(hItem,NULL);
+    for(uint8_t i = 0; i < 6; i++)
+    {
+
+    LISTVIEW_SetItemText(hItem,i,0,"0");
+    }
+	*/
 
 
 
+    std::string title("\nSDR device\nnot found");
 
-    /*WM_HWIN hBox = MESSAGEBOX_Create("Closes in a\n"
-                           	"few seconds...",
-                           	"Message", GUI_MESSAGEBOX_CF_MODAL);*/
 
+    FRAMEWIN_SetDefaultFont(GUI_FONT_8X16);
+    hBox = MESSAGEBOX_Create(title.c_str(),
+                           	"     Warning     ", GUI_MESSAGEBOX_CF_MODAL);
+    FRAMEWIN_SetFont(hBox,GUI_FONT_8X16);
+    FRAMEWIN_SetTextAlign(hBox,GUI_TA_HCENTER | GUI_TA_VCENTER);
+    FRAMEWIN_SetClientColor(hBox,0x000000);
+    WM_HWIN hBoxText = WM_GetDialogItem(hBox,GUI_ID_OK);
+
+
+    BUTTON_SetBkColor(hBoxText,BUTTON_CI_UNPRESSED,GUI_TRANSPARENT);
+    BUTTON_SetTextColor(hBoxText,BUTTON_CI_UNPRESSED,0x3ae635);
+    BUTTON_SetFrameColor(hBoxText,GUI_TRANSPARENT);
+    BUTTON_SetFont(hBoxText,GUI_FONT_8X16);
+    BUTTON_SetText(hBoxText,"");
+    WIDGET_SetEffect(hBoxText,&WIDGET_Effect_None);
+
+
+    WM_HWIN hBoxTextt = WM_GetDialogItem(hBox,GUI_ID_TEXT0);
+    TEXT_SetTextAlign(hBoxTextt,GUI_TA_HCENTER);
+    TEXT_SetTextColor(hBoxTextt,0x3ae635);
+    WM_HideWindow(hBox);
     // USER END
+
   }
     break;
   case WM_NOTIFY_PARENT:
     Id    = WM_GetId(pMsg->hWinSrc);
     NCode = pMsg->Data.v;
     switch(Id) {
-    case ID_LISTVIEW_0: // Notifications sent by 'Listview'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+        case ID_LISTVIEW_0: // Notifications sent by 'Listview'
+          switch(NCode) {
+          case WM_NOTIFICATION_CLICKED:
+            // USER START (Optionally insert code for reacting on notification message)
+            // USER END
+            break;
+          case WM_NOTIFICATION_RELEASED:
+            // USER START (Optionally insert code for reacting on notification message)
+            // USER END
+            break;
+          case WM_NOTIFICATION_SEL_CHANGED:
+            // USER START (Optionally insert code for reacting on notification message)
+            // USER END
+            break;
+          // USER START (Optionally insert additional code for further notification handling)
+          // USER END
+          }
+          break;
+          case ID_SCROLLBAR_0: // Notifications sent by 'Scrollbar'
+               switch(NCode) {
+               case WM_NOTIFICATION_CLICKED:
+                 // USER START (Optionally insert code for reacting on notification message)
+                 // USER END
+                 break;
+               case WM_NOTIFICATION_RELEASED:
+                 // USER START (Optionally insert code for reacting on notification message)
+                 // USER END
+                 break;
+               case WM_NOTIFICATION_VALUE_CHANGED:
+                 // USER START (Optionally insert code for reacting on notification message)
+                 // USER END
+                 break;
+               // USER START (Optionally insert additional code for further notification handling)
+               // USER END
+               }
+               break;
+             // USER START (Optionally insert additional code for further Ids)
+             // USER END
+             }
+             break;
+           // USER START (Optionally insert additional message handling)
+           // USER END
+      default:
+        WM_DefaultProc(pMsg);
         break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_SEL_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
-      break;
-    // USER START (Optionally insert additional code for further Ids)
-    // USER END
-    }
-    break;
-  // USER START (Optionally insert additional message handling)
-  // USER END
-  default:
-    WM_DefaultProc(pMsg);
-    break;
-  }
+}
+
+void FlightCotrolView::ShowWarningMsg()
+{
+	WM_ShowWindow(hBox);
+}
+
+void FlightCotrolView::HideWarningMsg()
+{
+	WM_HideWindow(hBox);
 }
 
 
 
-
-
 WM_HWIN CreateWindow(void) {
-	  FRAMEWIN_SetDefaultSkinClassic();
-	  HEADER_SetDefaultSkinClassic();
+	  //FRAMEWIN_SetDefaultSkinClassic();
+	  //HEADER_SetDefaultSkinClassic();
+	WIDGET_EFFECT_Simple_SetColor(0,0x3ae635);
+	BUTTON_SetDefaultSkinClassic();
+	HEADER_SKINFLEX_PROPS props;
 
-  WM_HWIN hWin;
- // WM_MULTIBUF_Enable(1);
+	props.aColorFrame[0] = 0x3ae635;
+	props.aColorFrame[1] = GUI_TRANSPARENT;
+	props.aColorUpper[0] = 0x0c0c0c;
+	props.aColorUpper[1] = 0x131313;
+	props.aColorLower[0] = 0x202020;
+	props.aColorLower[1] = 0x2f2f2f;
+	HEADER_SetSkinFlexProps(&props,0);
+
+	SCROLLBAR_SKINFLEX_PROPS propScroll;
+
+	propScroll.aColorFrame[0] = 0x3ae635;
+	propScroll.aColorFrame[1] = 0xc4c09;
+	propScroll.aColorFrame[2] = 0xc4c09;
+	propScroll.aColorUpper[0] = 0x202020;
+	propScroll.aColorUpper[1] = 0x2f2f2f;
+	propScroll.aColorLower[0] = 0x0c0c0c;
+	propScroll.aColorLower[1] = 0x131313;
+	propScroll.aColorShaft[0] = 0x101010;
+	propScroll.aColorShaft[1] = 0x1e1e1e;
+	propScroll.ColorArrow = 0x3ae635;
+	propScroll.ColorGrasp = 0x3ae635;
+	SCROLLBAR_SetSkinFlexProps(&propScroll,SCROLLBAR_SKINFLEX_PI_UNPRESSED);
+
+	FRAMEWIN_SetDefaultTextColor(0,0x3ae635);
+	FRAMEWIN_SetDefaultBorderSize(0);
+	FRAMEWIN_SKINFLEX_PROPS propsFrame;
+	propsFrame.aColorFrame[0] = 0x3ae635;
+	propsFrame.aColorFrame[1] = 0x1aa415;
+	propsFrame.aColorFrame[2] = GUI_BLACK;
+	propsFrame.aColorTitle[0] = 0x0c0c0c;
+	propsFrame.aColorTitle[1] = 0x2f2f2f;
+	propsFrame.BorderSizeB = 5;
+	propsFrame.BorderSizeL = 5;
+	propsFrame.BorderSizeR = 5;
+	propsFrame.BorderSizeT = 2;
+	propsFrame.SpaceX = 0;
+	propsFrame.Radius = 0;
+	FRAMEWIN_SetSkinFlexProps(&propsFrame,1);
+
+
+	WM_HWIN hWin;
+  WM_MULTIBUF_Enable(1);
+  LISTVIEW_SetDefaultGridColor(0xc4c09);
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), DialogCallback, WM_GetDesktopWindowEx(0), 0, 0);
   //hWin0 = GUI_CreateDialogBox(_aDialogCreate2, GUI_COUNTOF(_aDialogCreate2), DialogCallback2, WM_GetDesktopWindowEx(1), 0, 0);
 
@@ -355,8 +522,55 @@ void FlightCotrolView::Init()
 
 
 }
+/*
+char buffstat[64];
+void FlightCotrolView::UpdateStats(const ADS_BMessage& msg)
+{
+	LISTVIEW_AddRow(statisticListView,NULL);
+	 static uint32_t adsb_rec = 0;
+	 static uint32_t vel_rec = 0;
+	 static uint32_t id_rec = 0;
+	 static uint32_t pos_odd = 0;
+	 static uint32_t pos_even = 0;
+	 static uint32_t bad_crc = 0;
 
-
+	 std::string a("test");
+	 if(!msg.crcok)
+	 {
+		 return;
+	 }
+	 switch(msg.msgtype)
+	 {
+	 case 17:
+		 sprintf(buffstat,"%lu",++adsb_rec);
+		 LISTVIEW_SetItemText(statisticListView,0,0,buffstat);
+		 if (msg.metype >= 1 && msg.metype <= 4)
+		 {
+			 sprintf(buffstat,"%lu",++id_rec);
+			 LISTVIEW_SetItemText(statisticListView,4,0,buffstat);
+		 }
+		 else if(msg.metype >= 9 && msg.metype <= 18)
+		 {
+			 if(msg.fflag == 0)
+			 {
+				 sprintf(buffstat,"%lu",++pos_odd);
+				 LISTVIEW_SetItemText(statisticListView,3,0,buffstat);
+			 }
+			 else
+			 {
+				 sprintf(buffstat,"%lu",++pos_even);
+				 LISTVIEW_SetItemText(statisticListView,2,0,buffstat);
+			 }
+		 }
+		 else if(msg.metype == 19 && msg.mesub >= 1 && msg.mesub <= 4)
+		 {
+			 sprintf(buffstat,"%lu",++vel_rec);
+			 LISTVIEW_SetItemText(statisticListView,1,0,buffstat);
+		 }
+		 break;
+	 }
+}
+*/
 void FlightCotrolView::Update(const std::list<AircraftRecord>& aircrafts)
 {
 	LISTVIEW_DeleteAllRows(aircraftsLitView);

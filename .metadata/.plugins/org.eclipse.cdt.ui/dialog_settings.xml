@@ -20,6 +20,7 @@
 		<item value="false" key="caseSensitive"/>
 		<item value="227191" key="searchFlags"/>
 		<list key="previousPatterns">
+			<item value="latRef"/>
 			<item value="USBH_LL_SetTimer"/>
 			<item value="phostTimer"/>
 			<item value="USBH_URB_STALL"/>

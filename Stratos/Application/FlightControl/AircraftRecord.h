@@ -11,7 +11,14 @@
 #include "string"
 #include "ADSBMessage.h"
 
-#define DEFAULT_LIVE_SPAN 60U //120s
+#define homeLat 51.253811F
+#define homeLon 15.395468F
+#define dormLat 51.109402F
+#define dormLon 17.059798F
+
+#define DEFAULT_LIVE_SPAN 120U //120s
+#define latRef dormLat
+#define lonRef dormLon
 
 class AircraftRecord
 {
@@ -27,6 +34,7 @@ public:
 	void SetFlightName(const char* newFlightName);
 	void SetVelocityAndHeading(const int& velocity, const float& heading);
 
+	const float& GetHeading() const {return heading;}
 	const float& GetLat() const { return latitude;}
 	const float& GetLon() const { return lognitude;}
 	uint32_t altitude;
@@ -42,6 +50,8 @@ public:
 	void Tick(uint32_t ticks);
 
 	void decodeCPR(const int& fflag, const int& cprLat, const int& cprLon);
+
+	void CalcNewPosition(int time);
 private:
 	std::string ICAO_Address;
 
@@ -54,7 +64,8 @@ private:
 
 	float latitude;
 	float lognitude;
-
+	float heading;
+	int velocity;
 	int cprNLFunction(double lat);
 	int cprNFunction(double lat, int isodd);
 	float CprMod(const float& x, const float& y);
